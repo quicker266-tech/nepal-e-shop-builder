@@ -1,13 +1,15 @@
-import { Bell, Search, LogOut, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Bell, Search, LogOut, User, ExternalLink } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStore } from '@/contexts/StoreContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export default function DashboardHeader() {
   const { user, signOut } = useAuth();
+  const { currentStore } = useStore();
   const navigate = useNavigate();
 
   return (
@@ -20,6 +22,15 @@ export default function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-3">
+        {currentStore && (
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link to={`/store/${currentStore.slug}`} target="_blank">
+              <ExternalLink className="w-4 h-4" />
+              Visit Store
+            </Link>
+          </Button>
+        )}
+        
         <Button variant="ghost" size="icon">
           <Bell className="w-5 h-5" />
         </Button>
