@@ -322,6 +322,63 @@ export type Database = {
           },
         ]
       }
+      page_sections: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          is_visible: boolean
+          mobile_config: Json | null
+          name: string
+          page_id: string
+          section_type: Database["public"]["Enums"]["section_type"]
+          sort_order: number
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          mobile_config?: Json | null
+          name: string
+          page_id: string
+          section_type: Database["public"]["Enums"]["section_type"]
+          sort_order?: number
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          mobile_config?: Json | null
+          name?: string
+          page_id?: string
+          section_type?: Database["public"]["Enums"]["section_type"]
+          sort_order?: number
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_sections_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "store_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_sections_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           attributes: Json | null
@@ -489,6 +546,170 @@ export type Database = {
         }
         Relationships: []
       }
+      store_header_footer: {
+        Row: {
+          created_at: string
+          footer_config: Json
+          header_config: Json
+          id: string
+          social_links: Json
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          footer_config?: Json
+          header_config?: Json
+          id?: string
+          social_links?: Json
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          footer_config?: Json
+          header_config?: Json
+          id?: string
+          social_links?: Json
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_header_footer_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_navigation: {
+        Row: {
+          created_at: string
+          id: string
+          is_highlighted: boolean
+          label: string
+          location: Database["public"]["Enums"]["nav_location"]
+          open_in_new_tab: boolean
+          page_id: string | null
+          parent_id: string | null
+          sort_order: number
+          store_id: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_highlighted?: boolean
+          label: string
+          location?: Database["public"]["Enums"]["nav_location"]
+          open_in_new_tab?: boolean
+          page_id?: string | null
+          parent_id?: string | null
+          sort_order?: number
+          store_id: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_highlighted?: boolean
+          label?: string
+          location?: Database["public"]["Enums"]["nav_location"]
+          open_in_new_tab?: boolean
+          page_id?: string | null
+          parent_id?: string | null
+          sort_order?: number
+          store_id?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_navigation_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "store_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_navigation_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "store_navigation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_navigation_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_pages: {
+        Row: {
+          created_at: string
+          id: string
+          is_published: boolean
+          og_image_url: string | null
+          page_type: Database["public"]["Enums"]["page_type"]
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          show_footer: boolean
+          show_header: boolean
+          slug: string
+          store_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          og_image_url?: string | null
+          page_type?: Database["public"]["Enums"]["page_type"]
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          show_footer?: boolean
+          show_header?: boolean
+          slug: string
+          store_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          og_image_url?: string | null
+          page_type?: Database["public"]["Enums"]["page_type"]
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          show_footer?: boolean
+          show_header?: boolean
+          slug?: string
+          store_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_pages_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_staff: {
         Row: {
           created_at: string
@@ -514,6 +735,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "store_staff_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_themes: {
+        Row: {
+          colors: Json
+          created_at: string
+          custom_css: string | null
+          id: string
+          is_active: boolean
+          layout: Json
+          name: string
+          store_id: string
+          typography: Json
+          updated_at: string
+        }
+        Insert: {
+          colors?: Json
+          created_at?: string
+          custom_css?: string | null
+          id?: string
+          is_active?: boolean
+          layout?: Json
+          name?: string
+          store_id: string
+          typography?: Json
+          updated_at?: string
+        }
+        Update: {
+          colors?: Json
+          created_at?: string
+          custom_css?: string | null
+          id?: string
+          is_active?: boolean
+          layout?: Json
+          name?: string
+          store_id?: string
+          typography?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_themes_store_id_fkey"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
@@ -616,6 +884,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "store_admin" | "store_staff" | "customer"
+      nav_location: "header" | "footer" | "mobile"
       order_status:
         | "pending"
         | "confirmed"
@@ -624,7 +893,36 @@ export type Database = {
         | "delivered"
         | "cancelled"
         | "refunded"
+      page_type: "homepage" | "about" | "contact" | "policy" | "custom"
       product_status: "draft" | "active" | "archived"
+      section_type:
+        | "header"
+        | "footer"
+        | "hero_banner"
+        | "hero_slider"
+        | "hero_video"
+        | "featured_products"
+        | "product_grid"
+        | "product_carousel"
+        | "new_arrivals"
+        | "best_sellers"
+        | "category_grid"
+        | "category_banner"
+        | "text_block"
+        | "image_text"
+        | "gallery"
+        | "testimonials"
+        | "faq"
+        | "announcement_bar"
+        | "newsletter"
+        | "countdown"
+        | "promo_banner"
+        | "social_feed"
+        | "trust_badges"
+        | "brand_logos"
+        | "custom_html"
+        | "spacer"
+        | "divider"
       store_status: "pending" | "active" | "suspended" | "closed"
     }
     CompositeTypes: {
@@ -754,6 +1052,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "store_admin", "store_staff", "customer"],
+      nav_location: ["header", "footer", "mobile"],
       order_status: [
         "pending",
         "confirmed",
@@ -763,7 +1062,37 @@ export const Constants = {
         "cancelled",
         "refunded",
       ],
+      page_type: ["homepage", "about", "contact", "policy", "custom"],
       product_status: ["draft", "active", "archived"],
+      section_type: [
+        "header",
+        "footer",
+        "hero_banner",
+        "hero_slider",
+        "hero_video",
+        "featured_products",
+        "product_grid",
+        "product_carousel",
+        "new_arrivals",
+        "best_sellers",
+        "category_grid",
+        "category_banner",
+        "text_block",
+        "image_text",
+        "gallery",
+        "testimonials",
+        "faq",
+        "announcement_bar",
+        "newsletter",
+        "countdown",
+        "promo_banner",
+        "social_feed",
+        "trust_badges",
+        "brand_logos",
+        "custom_html",
+        "spacer",
+        "divider",
+      ],
       store_status: ["pending", "active", "suspended", "closed"],
     },
   },
