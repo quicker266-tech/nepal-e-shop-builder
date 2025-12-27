@@ -36,34 +36,53 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
 
 export function StoreBuilder() {
+  // ==========================================================================
+  // CONTEXT & DATA HOOKS
+  // ==========================================================================
+  // currentStore: The currently selected store from StoreContext
+  // pages: All pages for this store (homepage, about, etc.)
+  // theme: The active theme configuration (colors, fonts, layout)
   const { currentStore } = useStore();
   const { pages, loading: pagesLoading, createPage, updatePage, deletePage } = useStorePages(currentStore?.id);
   const { theme, loading: themeLoading, updateTheme } = useStoreTheme(currentStore?.id);
   
-  // Editor state
+  // ==========================================================================
+  // LOCAL EDITOR STATE
+  // ==========================================================================
+  // activePage: Which page is currently being edited
+  // editorState: UI state (selected section, preview mode, zoom level)
+  // activeTab: Which sidebar tab is active (sections/theme/pages)
   const [activePage, setActivePage] = useState<StorePage | null>(null);
   const [editorState, setEditorState] = useState<EditorState>({
-    selectedSectionId: null,
-    isDragging: false,
-    previewMode: 'desktop',
-    showGrid: false,
-    zoom: 100,
+    selectedSectionId: null,  // ID of section being configured in right sidebar
+    isDragging: false,        // True while dragging a section
+    previewMode: 'desktop',   // 'desktop' | 'tablet' | 'mobile'
+    showGrid: false,          // Show alignment grid overlay
+    zoom: 100,                // Preview zoom percentage (50-150)
   });
   const [activeTab, setActiveTab] = useState<'sections' | 'theme' | 'pages'>('sections');
 
-  // Get sections for the active page
+  // ==========================================================================
+  // SECTIONS HOOK
+  // ==========================================================================
+  // Fetches and manages sections for the currently active page
+  // Each section has a type, config (JSONB), and sort_order
   const {
     sections,
     loading: sectionsLoading,
-    addSection,
-    updateSection,
-    updateSectionConfig,
-    deleteSection,
-    reorderSections,
-    duplicateSection,
+    addSection,           // (sectionType, insertIndex?) => Add new section
+    updateSection,        // (id, updates) => Update section properties
+    updateSectionConfig,  // (id, config) => Update section's config JSON
+    deleteSection,        // (id) => Remove section from page
+    reorderSections,      // (sections[]) => Update sort order
+    duplicateSection,     // (id) => Clone a section
   } = usePageSections(activePage?.id, currentStore?.id);
 
-  // Set first page as active when pages load
+  // ==========================================================================
+  // EFFECTS: Page Initialization
+  // ==========================================================================
+  
+  // Auto-select homepage (or first page) when pages load
   useEffect(() => {
     if (pages.length > 0 && !activePage) {
       const homepage = pages.find(p => p.page_type === 'homepage');
@@ -71,7 +90,8 @@ export function StoreBuilder() {
     }
   }, [pages, activePage]);
 
-  // Create homepage if no pages exist
+  // Auto-create homepage if store has no pages yet
+  // This ensures every store has at least a homepage to edit
   useEffect(() => {
     if (!pagesLoading && pages.length === 0 && currentStore?.id) {
       createPage({
