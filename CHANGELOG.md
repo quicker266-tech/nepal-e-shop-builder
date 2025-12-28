@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0] - 2024-12-28
+
+### Fixed - Store Builder Core Functionality
+- **Complete Preview Renderers**: Added full preview rendering for all 26 section types (hero_banner, hero_slider, hero_video, featured_products, product_grid, product_carousel, new_arrivals, best_sellers, category_grid, category_banner, text_block, image_text, gallery, testimonials, faq, announcement_bar, newsletter, countdown, promo_banner, trust_badges, brand_logos, social_feed, spacer, divider, custom_html)
+- **Complete Section Editors**: Added dedicated field editors for all section types with proper form controls
+- **Array Field Management**: Slides, testimonials, FAQs, gallery images, trust badges, and brand logos can now be added/edited/removed
+- **Theme-Aware Preview**: Preview frame now applies theme CSS variables for colors, typography, and layout
+- **Responsive Preview**: All section previews now adapt to desktop/tablet/mobile modes
+
+### Remaining Tasks (TODO)
+- Phase 2: Apply full theme styling to preview sections
+- Phase 3: Build customer-facing storefront renderer (StorePage.tsx)
+- Phase 4: Add routes, polish UX, toast notifications
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
