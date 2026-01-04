@@ -28,7 +28,7 @@ import { StorePage, PageSection, EditorState } from './types';
 import { SectionPalette } from './editor/SectionPalette';
 import { SectionList } from './editor/SectionList';
 import { SectionEditor } from './editor/SectionEditor';
-import { PageManager } from './editor/PageManager';
+import { PageSelector } from './editor/PageSelector';
 import { ThemeEditor } from './editor/ThemeEditor';
 import { PreviewFrame } from './editor/PreviewFrame';
 import { EditorHeader } from './editor/EditorHeader';
@@ -60,7 +60,7 @@ export function StoreBuilder() {
     showGrid: false,          // Show alignment grid overlay
     zoom: 100,                // Preview zoom percentage (50-150)
   });
-  const [activeTab, setActiveTab] = useState<'sections' | 'theme' | 'pages'>('sections');
+  const [activeTab, setActiveTab] = useState<'sections' | 'theme' | 'settings'>('sections');
 
   // ==========================================================================
   // SECTIONS HOOK
@@ -103,9 +103,21 @@ export function StoreBuilder() {
   useEffect(() => {
     if (pages.length > 0 && !activePage) {
       const homepage = pages.find(p => p.page_type === 'homepage');
-      setActivePage(homepage || pages[0]);
+      const selectedPage = homepage || pages[0];
+      console.log('[Step 1B.3] Auto-selecting page:', { 
+        title: selectedPage.title, 
+        type: selectedPage.page_type 
+      });
+      setActivePage(selectedPage);
     }
   }, [pages, activePage]);
+
+  // Handler for page selection with logging
+  const handlePageSelect = (page: StorePage) => {
+    console.log('[Step 1B.3] Active page changed:', page.id, ', loading sections...');
+    setActivePage(page);
+    setEditorState({ ...editorState, selectedSectionId: null });
+  };
 
   // Auto-create homepage if store has no pages yet
   // This ensures every store has at least a homepage to edit
@@ -152,11 +164,18 @@ export function StoreBuilder() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Section Management */}
         <aside className="w-80 bg-background border-r border-border flex flex-col">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="flex flex-col h-full">
-            <TabsList className="grid w-full grid-cols-3 m-2 mb-0">
+          {/* Page Selector - Always visible at top */}
+          <PageSelector
+            pages={pages}
+            activePage={activePage}
+            onSelectPage={handlePageSelect}
+          />
+
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="flex flex-col flex-1 overflow-hidden">
+            <TabsList className="grid w-full grid-cols-3 mx-2 mt-2 mb-0 w-[calc(100%-16px)]">
               <TabsTrigger value="sections">Sections</TabsTrigger>
               <TabsTrigger value="theme">Theme</TabsTrigger>
-              <TabsTrigger value="pages">Pages</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="sections" className="flex-1 overflow-hidden m-0 flex flex-col">
@@ -191,15 +210,12 @@ export function StoreBuilder() {
               )}
             </TabsContent>
 
-            <TabsContent value="pages" className="flex-1 overflow-auto m-0">
-              <PageManager
-                pages={pages}
-                activePage={activePage}
-                onSelectPage={setActivePage}
-                onCreatePage={createPage}
-                onUpdatePage={updatePage}
-                onDeletePage={deletePage}
-              />
+            <TabsContent value="settings" className="flex-1 overflow-auto m-0 p-4">
+              {/* Placeholder for Step 1B.4: PageSettings component */}
+              <div className="text-center text-muted-foreground py-8">
+                <p className="text-sm">Page settings coming soon...</p>
+                <p className="text-xs mt-2">SEO, visibility, publishing options</p>
+              </div>
             </TabsContent>
           </Tabs>
         </aside>
