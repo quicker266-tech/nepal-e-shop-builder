@@ -74,7 +74,9 @@ export const PAGE_TYPE_SECTIONS: Record<PageType, SectionType[]> = {
   
   // Product catalog/listing page
   product: [
+    'product_filters', 'product_sort',
     'product_grid', 'product_carousel', 'featured_products', 'new_arrivals', 'best_sellers',
+    'recently_viewed', 'recommended_products', 'product_reviews',
     'category_grid', 'promo_banner', 'trust_badges',
     'spacer', 'divider',
   ],
@@ -82,6 +84,7 @@ export const PAGE_TYPE_SECTIONS: Record<PageType, SectionType[]> = {
   // Category browsing page
   category: [
     'category_grid', 'category_banner', 'product_grid',
+    'product_filters', 'product_sort',
     'promo_banner',
     'spacer', 'divider',
   ],
