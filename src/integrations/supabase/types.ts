@@ -972,7 +972,19 @@ export type Database = {
         | "delivered"
         | "cancelled"
         | "refunded"
-      page_type: "homepage" | "about" | "contact" | "policy" | "custom"
+      page_type:
+        | "homepage"
+        | "about"
+        | "contact"
+        | "policy"
+        | "custom"
+        | "product"
+        | "category"
+        | "cart"
+        | "checkout"
+        | "profile"
+        | "order_tracking"
+        | "search"
       product_status: "draft" | "active" | "archived"
       section_type:
         | "header"
@@ -1141,7 +1153,20 @@ export const Constants = {
         "cancelled",
         "refunded",
       ],
-      page_type: ["homepage", "about", "contact", "policy", "custom"],
+      page_type: [
+        "homepage",
+        "about",
+        "contact",
+        "policy",
+        "custom",
+        "product",
+        "category",
+        "cart",
+        "checkout",
+        "profile",
+        "order_tracking",
+        "search",
+      ],
       product_status: ["draft", "active", "archived"],
       section_type: [
         "header",
