@@ -62,6 +62,9 @@ import {
   FolderTree,
   Layout,
   AlertCircle,
+  Filter,
+  History,
+  MessageSquare,
 } from 'lucide-react';
 import { SECTION_DEFINITIONS, SECTION_CATEGORIES } from '../constants';
 import { SectionType, PageType } from '../types';
@@ -107,6 +110,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Package,
   FolderTree,
   Layout,
+  // New icons for product page sections (Step 2.2)
+  Filter,
+  History,
+  MessageSquare,
 };
 
 /**
