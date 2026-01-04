@@ -31,8 +31,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FileText, Home, Info, Phone, FileCheck, Trash2 } from 'lucide-react';
-import { StorePage, PageType } from '../types';
+import { 
+  Plus, FileText, Home, Info, Phone, FileCheck, Trash2,
+  ShoppingBag, Grid, ShoppingCart, CreditCard, User, Package, Search
+} from 'lucide-react';
+import { StorePage, PageType, SYSTEM_PAGE_TYPES } from '../types';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -65,6 +68,21 @@ const pageTypeIcons: Record<PageType, React.ComponentType<{ className?: string }
   contact: Phone,
   policy: FileCheck,
   custom: FileText,
+  // New e-commerce system pages
+  product: ShoppingBag,
+  category: Grid,
+  cart: ShoppingCart,
+  checkout: CreditCard,
+  profile: User,
+  order_tracking: Package,
+  search: Search,
+};
+
+/**
+ * Check if a page type is a system page (cannot be deleted)
+ */
+const isSystemPage = (pageType: PageType): boolean => {
+  return SYSTEM_PAGE_TYPES.includes(pageType);
 };
 
 export function PageManager({
@@ -142,13 +160,18 @@ export function PageManager({
                 {/* Page title (truncated if long) */}
                 <span className="flex-1 text-sm truncate">{page.title}</span>
                 
+                {/* System page indicator */}
+                {isSystemPage(page.page_type) && (
+                  <Badge variant="outline" className="text-xs">System</Badge>
+                )}
+                
                 {/* Publication status badge */}
                 {page.is_published && (
                   <Badge variant="secondary" className="text-xs">Live</Badge>
                 )}
                 
-                {/* Delete button (not shown for homepage - can't delete homepage) */}
-                {page.page_type !== 'homepage' && (
+                {/* Delete button (not shown for system pages - can't delete them) */}
+                {!isSystemPage(page.page_type) && (
                   <Button
                     variant="ghost"
                     size="icon"

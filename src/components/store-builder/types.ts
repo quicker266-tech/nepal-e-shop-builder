@@ -19,7 +19,35 @@
 // ENUMS
 // ============================================================================
 
-export type PageType = 'homepage' | 'about' | 'contact' | 'policy' | 'custom';
+export type PageType = 
+  | 'homepage' 
+  | 'about' 
+  | 'contact' 
+  | 'policy' 
+  | 'custom'
+  // New e-commerce system pages (Phase 1)
+  | 'product'       // Product catalog/listing page
+  | 'category'      // Category browsing page
+  | 'cart'          // Shopping cart
+  | 'checkout'      // Checkout flow
+  | 'profile'       // Customer account
+  | 'order_tracking' // Order status tracking
+  | 'search';       // Search results page
+
+/**
+ * System pages are auto-created and cannot be deleted.
+ * They are rendered with special functional components, not sections.
+ */
+export const SYSTEM_PAGE_TYPES: PageType[] = [
+  'homepage', 'product', 'category', 'cart', 'checkout', 'profile', 'order_tracking', 'search'
+];
+
+/**
+ * Content pages can be customized with sections.
+ */
+export const CONTENT_PAGE_TYPES: PageType[] = [
+  'homepage', 'about', 'contact', 'policy', 'custom'
+];
 
 export type SectionType =
   // Header/Footer

@@ -379,6 +379,57 @@ export type Database = {
           },
         ]
       }
+      page_templates: {
+        Row: {
+          business_category: string | null
+          business_type: string
+          created_at: string
+          default_sections: Json
+          default_slug: string | null
+          default_title: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          page_type: Database["public"]["Enums"]["page_type"]
+          preview_image_url: string | null
+          sort_order: number | null
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          business_category?: string | null
+          business_type: string
+          created_at?: string
+          default_sections?: Json
+          default_slug?: string | null
+          default_title?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          page_type: Database["public"]["Enums"]["page_type"]
+          preview_image_url?: string | null
+          sort_order?: number | null
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          business_category?: string | null
+          business_type?: string
+          created_at?: string
+          default_sections?: Json
+          default_slug?: string | null
+          default_title?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          page_type?: Database["public"]["Enums"]["page_type"]
+          preview_image_url?: string | null
+          sort_order?: number | null
+          template_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           attributes: Json | null
@@ -872,6 +923,8 @@ export type Database = {
         Row: {
           address: string | null
           banner_url: string | null
+          business_category: string
+          business_type: string
           city: string | null
           created_at: string
           description: string | null
@@ -889,6 +942,8 @@ export type Database = {
         Insert: {
           address?: string | null
           banner_url?: string | null
+          business_category?: string
+          business_type?: string
           city?: string | null
           created_at?: string
           description?: string | null
@@ -906,6 +961,8 @@ export type Database = {
         Update: {
           address?: string | null
           banner_url?: string | null
+          business_category?: string
+          business_type?: string
           city?: string | null
           created_at?: string
           description?: string | null
@@ -952,12 +1009,30 @@ export type Database = {
         Args: { _store_id: string; _user_id: string }
         Returns: boolean
       }
+      get_standard_pages_for_business: {
+        Args: { p_business_category?: string; p_business_type: string }
+        Returns: {
+          default_sections: Json
+          page_type: Database["public"]["Enums"]["page_type"]
+          slug: string
+          sort_order: number
+          title: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      initialize_store_pages: {
+        Args: {
+          p_business_category?: string
+          p_business_type?: string
+          p_store_id: string
+        }
+        Returns: number
       }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }

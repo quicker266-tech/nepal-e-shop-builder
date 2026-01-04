@@ -14,6 +14,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2026-01-04
+
+### Added - Complete Page Builder System (Phase 1)
+
+**Database Architecture**
+- New columns on `stores`: `business_type`, `business_category` for future multi-business support
+- Extended `page_type` enum with: `product`, `category`, `cart`, `checkout`, `profile`, `order_tracking`, `search`
+- New table: `page_templates` - Stores default page configurations per business type
+- New helper functions:
+  - `get_standard_pages_for_business()` - Returns templates for a business type
+  - `initialize_store_pages()` - Creates all standard pages for a store
+  - `auto_initialize_store_pages()` - Trigger to auto-create pages on store creation
+
+**Page Auto-Initialization**
+- New stores automatically get all standard e-commerce pages
+- Existing stores backfilled with missing pages (Home, Products, Categories, Cart, Checkout, Profile, About, Contact)
+- Pages created with default sections from templates
+
+**UI Updates**
+- Extended `PageType` in types.ts with all new page types
+- Added `SYSTEM_PAGE_TYPES` and `CONTENT_PAGE_TYPES` constants
+- `PageManager.tsx` now shows system page badges and prevents deletion of system pages
+- New icons for all page types (ShoppingBag, Grid, ShoppingCart, CreditCard, User, Package, Search)
+
+---
+
 ## [0.6.0] - 2025-12-31
 
 ### Fixed - Critical Store Builder Bugs
