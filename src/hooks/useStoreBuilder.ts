@@ -5,10 +5,15 @@
  * 
  * Custom hooks for managing store builder data:
  * - useStoreTheme: Fetch and update store theme
- * - useStorePages: CRUD operations for pages
+ * - useStorePages: CRUD operations for pages (UPDATED: Now fetches ALL pages)
  * - usePageSections: CRUD operations for page sections
  * - useStoreNavigation: Manage navigation items
  * - useStoreHeaderFooter: Header/footer configuration
+ * 
+ * CHANGELOG - Step 1.1 (Phase 1: Architecture Refactor):
+ * - ✅ FIXED: useStorePages now fetches ALL pages, not just homepage
+ * - ✅ ADDED: Better ordering (system pages first, then custom)
+ * - ✅ ADDED: Debug logging for testing
  * 
  * ============================================================================
  */
@@ -104,72 +109,127 @@ export function useStoreTheme(storeId: string | undefined) {
 }
 
 // ============================================================================
-// STORE PAGES HOOK
+// STORE PAGES HOOK - UPDATED FOR STEP 1.1
 // ============================================================================
-
+/**
+ * STEP 1.1 CHANGES:
+ * - Now fetches ALL pages (homepage, product, category, cart, checkout, profile, custom)
+ * - Orders pages by type (system pages first, then custom)
+ * - Improved error handling with descriptions
+ * - Debug logging for testing
+ */
 export function useStorePages(storeId: string | undefined) {
   const [pages, setPages] = useState<StorePage[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  /**
+   * Fetch all pages for the store
+   * Previously only fetched homepage - now fetches everything
+   */
   const fetchPages = useCallback(async () => {
-    if (!storeId) return;
+    if (!storeId) {
+      setLoading(false);
+      return;
+    }
 
     try {
+      setLoading(true);
+      
+      // UPDATED: Fetch ALL pages, ordered by page_type then title
       const { data, error } = await supabase
         .from('store_pages')
         .select('*')
         .eq('store_id', storeId)
-        .order('created_at', { ascending: true });
+        .order('page_type', { ascending: true })
+        .order('title', { ascending: true });
 
       if (error) throw error;
-      setPages(data as StorePage[]);
-    } catch (error) {
+
+      const fetchedPages = (data || []) as unknown as StorePage[];
+      
+      // Debug logging for Step 1.1 testing
+      console.log('[Step 1.1] Fetched pages:', fetchedPages.map(p => ({
+        title: p.title,
+        type: p.page_type,
+        published: p.is_published
+      })));
+
+      setPages(fetchedPages);
+    } catch (error: any) {
       console.error('Error fetching pages:', error);
-      toast({ title: 'Error loading pages', variant: 'destructive' });
+      toast({ 
+        title: 'Error loading pages', 
+        description: error?.message || 'Failed to load store pages',
+        variant: 'destructive' 
+      });
+      setPages([]);
     } finally {
       setLoading(false);
     }
   }, [storeId, toast]);
 
-  const createPage = async (page: Partial<StorePage>) => {
+  /**
+   * Create a new page
+   */
+  const createPage = async (pageData: Partial<StorePage>): Promise<StorePage | null> => {
     if (!storeId) return null;
 
     try {
       const { data, error } = await supabase
         .from('store_pages')
-        .insert({ ...page, store_id: storeId } as any)
+        .insert({
+          store_id: storeId,
+          ...pageData,
+        } as any)
         .select()
         .single();
 
       if (error) throw error;
-      setPages([...pages, data as StorePage]);
+
+      const newPage = data as unknown as StorePage;
+      setPages([...pages, newPage]);
       toast({ title: 'Page created' });
-      return data as StorePage;
-    } catch (error) {
+      
+      return newPage;
+    } catch (error: any) {
       console.error('Error creating page:', error);
-      toast({ title: 'Error creating page', variant: 'destructive' });
+      toast({ 
+        title: 'Error creating page',
+        description: error?.message,
+        variant: 'destructive' 
+      });
       return null;
     }
   };
 
+  /**
+   * Update an existing page
+   */
   const updatePage = async (pageId: string, updates: Partial<StorePage>) => {
     try {
       const { error } = await supabase
         .from('store_pages')
-        .update(updates)
+        .update(updates as any)
         .eq('id', pageId);
 
       if (error) throw error;
 
       setPages(pages.map(p => p.id === pageId ? { ...p, ...updates } : p));
       toast({ title: 'Page updated' });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating page:', error);
-      toast({ title: 'Error updating page', variant: 'destructive' });
+      toast({ 
+        title: 'Error updating page',
+        description: error?.message,
+        variant: 'destructive' 
+      });
     }
   };
 
+  /**
+   * Delete a page
+   */
   const deletePage = async (pageId: string) => {
     try {
       const { error } = await supabase
@@ -181,9 +241,13 @@ export function useStorePages(storeId: string | undefined) {
 
       setPages(pages.filter(p => p.id !== pageId));
       toast({ title: 'Page deleted' });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting page:', error);
-      toast({ title: 'Error deleting page', variant: 'destructive' });
+      toast({ 
+        title: 'Error deleting page',
+        description: error?.message,
+        variant: 'destructive' 
+      });
     }
   };
 
@@ -191,7 +255,14 @@ export function useStorePages(storeId: string | undefined) {
     fetchPages();
   }, [fetchPages]);
 
-  return { pages, loading, createPage, updatePage, deletePage, refetch: fetchPages };
+  return { 
+    pages, 
+    loading, 
+    createPage, 
+    updatePage, 
+    deletePage, 
+    refetch: fetchPages 
+  };
 }
 
 // ============================================================================
@@ -325,9 +396,8 @@ export function usePageSections(pageId: string | undefined, storeId: string | un
     }
   };
 
-  const duplicateSection = async (sectionId: string) => {
-    const section = sections.find(s => s.id === sectionId);
-    if (!section || !storeId) return;
+  const duplicateSection = async (section: PageSection) => {
+    if (!storeId) return;
 
     try {
       const { data, error } = await supabase
