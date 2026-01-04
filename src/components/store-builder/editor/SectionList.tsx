@@ -66,7 +66,7 @@ interface SectionListProps {
   onSelectSection: (id: string | null) => void;
   onReorder: (sections: PageSection[]) => void;
   onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
+  onDuplicate: (section: PageSection) => void;
   onToggleVisibility: (id: string) => void;
 }
 
@@ -232,7 +232,7 @@ export function SectionList({
                       Move Down
                     </DropdownMenuItem>
                     {/* Duplicate section */}
-                    <DropdownMenuItem onClick={() => onDuplicate(section.id)}>
+                    <DropdownMenuItem onClick={() => onDuplicate(section)}>
                       <Copy className="w-4 h-4 mr-2" />
                       Duplicate
                     </DropdownMenuItem>
